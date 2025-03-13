@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/dialog"
 import { Mail, CircleArrowUp,Filter, Circle } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
+import { FilterDialog } from "./FilterDialog"
 
 
 
@@ -62,10 +65,10 @@ export default function Home() {
           </div>
 
           <div className="flex justify-between items-center w-full">
-            <div className="relative inline-flex">
-                  <Circle color = "#888888" size={38} strokeWidth={1.5} className="cursor-pointer ml-2 mb-2"></Circle>
-                  <Filter color = "#888888" size={23} className="cursor-pointer absolute top-1/2 left-6.75 -translate-x-1/2 -translate-y-3.5" ></Filter>
-            </div>
+            {/* Filter button with dialog trigger*/}
+            <FilterDialog />
+
+            {/* Submit button */}
             <CircleArrowUp color = "#888888" size={38} strokeWidth={1.5} className="cursor-pointer mr-2 mb-2"/>
           </div>
 
