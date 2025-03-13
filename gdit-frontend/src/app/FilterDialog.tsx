@@ -46,15 +46,15 @@ export function FilterDialog({
                 <DialogTitle className="pb-5">Filters</DialogTitle>
               </DialogHeader>
               <div className="flex items-center space-x-3">
-                <Checkbox id="from" className="data-[state=checked]:border-white" onCheckedChange={() => toggleFilter('from')}/>
-                  <label htmlFor="from" >From</label>
-                  <Input id={"from-input"} className="ml-20 px-2 py-1" placeholder="example@enron.com" disabled={!filters.from}/>
-              </div>
-
-              <div className="flex items-center space-x-3">
                 <Checkbox id="to" className="data-[state=checked]:border-white" onCheckedChange={() => toggleFilter('to')}/>
                   <label htmlFor="to">To</label>
                   <Input id={"from-input"} className="ml-25 px-2 py-1" placeholder="example@enron.com" disabled={!filters.to}/>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Checkbox id="from" className="data-[state=checked]:border-white" onCheckedChange={() => toggleFilter('from')}/>
+                  <label htmlFor="from" >From</label>
+                  <Input id={"from-input"} className="ml-20 px-2 py-1" placeholder="example@enron.com" disabled={!filters.from}/>
               </div>
 
               <div className="flex items-center space-x-3">
@@ -79,12 +79,6 @@ export function FilterDialog({
                 <Checkbox id="includes" className="data-[state=checked]:border-white" onCheckedChange={() => toggleFilter('includes')}/>
                   <label htmlFor="includes">Includes</label>
                   <Input id={"from-input"} className="ml-14 px-2 py-1" placeholder="keep quiet" disabled={!filters.includes}/>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Checkbox id="emailLength" className="data-[state=checked]:border-white" onCheckedChange={() => toggleFilter('emailLength')}/>
-                  <label htmlFor="emailLength">Email Length</label>
-                  <Input id={"from-input"} className="ml-15 px-2 py-1" placeholder="500 characters" disabled={!filters.emailLength}/>
               </div>
 
               {/* Utilizes date picker component*/}
