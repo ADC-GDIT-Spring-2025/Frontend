@@ -11,11 +11,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Mail, CircleArrowUp, Filter, Circle } from "lucide-react";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/dialog"
+import { Mail, CircleArrowUp,Filter, Circle } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
+import { FilterDialog } from "./FilterDialog"
 import { fetchLlamaResponse } from "@/lib/llamaApi"; 
 import { ChatMessage } from "@/components/chat/ChatMessage"; 
+
+
 
 export default function Home() {
   const [messages, setMessages] = useState<{ text: string; sender: "user" | "bot" }[]>([]);
@@ -88,7 +93,9 @@ export default function Home() {
             onKeyDown={(e) => e.key === "Enter" && handleSend()} 
           />
           <div className="flex justify-between items-center w-full">
-            <CircleArrowUp color="#888888" size={38} strokeWidth={1.5} className="cursor-pointer mr-2 mb-2" onClick={handleSend} />
+          <FilterDialog />
+
+          <CircleArrowUp color="#888888" size={38} strokeWidth={1.5} className="cursor-pointer mr-2 mb-2" onClick={handleSend} />
           </div>
         </div>
       </div>
