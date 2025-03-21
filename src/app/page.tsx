@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowUp, Filter, Pencil } from "lucide-react"
+import { ArrowUp, Filter, Pencil, Info } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -9,13 +9,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/styleselect"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[radial-gradient(circle_at_top,_#8B3A2B_0%,_#4A1E1B_50%,_black_100%)] text-white">
       <main className="flex-1 flex flex-col items-center px-4 py-12">
         <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-2 relative">
+            <div className="absolute -right-16 top-0">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="icon" className="bg-black/30 hover:gray/40 text-white rounded-full h-10 w-10">
+                    <Info className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-black/90 border-gray-800 text-white">
+                  <DialogHeader>
+                    <DialogTitle>About EmailMiner.ai</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <p>EmailMiner.ai is an AI-powered tool that helps you analyze and understand email communications.</p>
+                    <p>Key features:</p>
+                    <ul className="list-disc list-inside space-y-2">
+                      <li>Summarize key points from email threads</li>
+                      <li>Track communication patterns between individuals</li>
+                      <li>Analyze sentiment and tone of conversations</li>
+                      <li>Generate insights from large email datasets</li>
+                    </ul>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
             <h2 className="text-2xl font-medium text-[#E8C0BC] opacity-45">Welcome to</h2>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-[#E8C0BC] opacity-45">EmailMiner.ai</h1>
           </div>
