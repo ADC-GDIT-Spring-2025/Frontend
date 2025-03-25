@@ -143,6 +143,20 @@ export default function Home() {
                       />
                     </div>
                     <div>
+                      <label className="text-sm font-medium mb-2 block">CC</label>
+                      <Input 
+                        placeholder="CC email address"
+                        className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">BCC</label>
+                      <Input 
+                        placeholder="BCC email address"
+                        className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                      />
+                    </div>
+                    <div>
                       <label className="text-sm font-medium mb-2 block">Date Range</label>
                       <div className="flex gap-2">
                         <Input 
