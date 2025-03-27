@@ -6,11 +6,16 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message, sender }) => {
-  const messageStyle =
-    sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground';
   return (
-    <div className={`p-2 my-2 rounded-md ${messageStyle}`}>
-      <p>{message}</p>
-    </div>
+    <div className={`flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div 
+      className={`max-w-[80%] rounded-lg p-4 ${ sender === 'user' ? 'bg-[#f9402b]/30 border border-[#f9402b] 50 ml-auto' : 'bg-black/30 border border-gray-500 mr-auto'}`}
+      style = {{ 
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word'
+      }}>
+        <p>{message}</p>
+        </div>
+      </div>
   );
 };

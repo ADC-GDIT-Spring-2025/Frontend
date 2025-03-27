@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowUp, Filter, Pencil, Info } from "lucide-react"
-import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -26,12 +25,14 @@ export default function Home() {
 
   const [messages, setMessages] = useState<{ text: string; sender: "user" | "bot" }[]>([]);
   const [input, setInput] = useState("");
+  const [startedChat, setStartedChat] = useState(false);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: { text: string; sender: "user" | "bot" } = { text: input, sender: "user" };
     setMessages((prevMessages : { text: string; sender: "user" | "bot" }[]) => [...prevMessages, userMessage]);
+    setStartedChat(true);
 
     try {
       console.log("Sending message:", input);
@@ -44,11 +45,13 @@ export default function Home() {
 
     setInput(""); //clear input after
   };
+
   return (
     <div className="min-h-screen relative flex flex-col text-white">
       <div className="absolute w-full h-full bg-[url('/gradient.png')] bg-cover bg-no-repeat brightness-50 z-[-5]"></div>
-      <main className="flex-1 flex flex-col items-center px-4 py-12">
-        <div className="flex-1 flex flex-col items-center justify-center">
+      <main className="flex-1 flex flex-col">
+        {!startedChat ? (
+        <div className="flex-1 flex flex-col items-center justify-center py-12 px-4">
           <div className="text-center space-y-2 relative">
             <div className="absolute -right-16 top-0">
               <Dialog>
@@ -77,9 +80,8 @@ export default function Home() {
             <h2 className="text-2xl font-medium text-[#E8C0BC] opacity-45">Welcome to</h2>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-[#E8C0BC] opacity-45">EmailMiner.ai</h1>
           </div>
-        </div>
 
-        <div className="w-full max-w-6xl space-y-8">
+        <div className="w-full max-w-6xl space-y-8 pt-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-black/30 flex flex-col justify-center h-24 border-gray-500 backdrop-blur-sm hover:bg-black/40 transition-colors">
               <CardContent className="">
@@ -102,8 +104,21 @@ export default function Home() {
               </CardContent>
             </Card>
           </div>
+        </div>
+      </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto pt-10 pb-30">
+          <div className="max-w-6xl mx-auto space-y-4">
+            {messages.map((msg, index) => (
+              <ChatMessage key={index} message={msg.text} sender={msg.sender} />
+            ))}
+          </div>
+        </div>
+      )}
 
-          <div className="flex flex-col justify-end md:flex-row gap-4 items-end">
+        {/* Fixing input at the bottom */}
+        <div className="fixed bottom-0 left-0 right-0 pb-10">
+          <div className="flex flex-col justify-end md:flex-row gap-4 items-end max-w-6xl mx-auto">
             <Select>
               <SelectTrigger className="bg-[#f9402b] h-12 hover:bg-[#A04840] border-none">
                 <Pencil className="h-5 w-5 mr-2" />
@@ -205,14 +220,12 @@ export default function Home() {
             </Dialog>
 
             <div className="flex-1 relative">
-              <Textarea
+              <Input
                 placeholder="Enter a prompt..."
                 className="bg-black/30 border-gray-500 min-h-[48px] max-h-[200px] pl-4 py-3 text-white placeholder:text-gray-400 w-full resize-none overflow-y-auto"
-                onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                  const target = e.currentTarget;
-                  target.style.height = 'auto';
-                  target.style.height = `${Math.min(target.scrollHeight, 200)}px`;
-                }}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()} 
               />
             </div>
 
