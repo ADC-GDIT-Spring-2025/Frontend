@@ -4,7 +4,8 @@ export async function POST(req: NextRequest) {
   try {
     const { model, thread, temperature, maxGenLen } = await req.json();
 
-    const systemPrompt = "You are a helpful assistant."; // modify this to be more 
+    // modify this as needed
+    const systemPrompt = "You are an AI assistant meant to help answer questions about the content of the Enron Email dataset. Each prompt will contain the natural language given by the user, followed by a json string of the relevant data from a Neo4j knowledge graph generated from the Enron dataset.";
 
     const response = await fetch('https://api.llms.afterhoursdev.com/chat/completions', {
       method: 'POST',

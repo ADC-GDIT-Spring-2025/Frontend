@@ -19,6 +19,7 @@ import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 import { FilterDialog } from "./FilterDialog"
 import { fetchLlamaResponse } from "@/lib/llamaApi"; 
 import { ChatMessage } from "@/components/chat/ChatMessage"; 
+import { fetchNeo4jData, neo4jTemplate } from "@/lib/neo4jApi";
 
 type ChatMessageType = {
   role: "user" | "assistant";
@@ -36,7 +37,10 @@ export default function Home() {
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    const userMessage: ChatMessageType = { role: "user", message: input };
+    const data = await fetchNeo4jData(input);
+    const prompt = `Prompt: ${input}\nKnowledge Graph Data: ${data}`
+    
+    const userMessage: ChatMessageType = { role: "user", message: prompt };
     const newThread = [...thread, userMessage];
     setThread(newThread);
 
