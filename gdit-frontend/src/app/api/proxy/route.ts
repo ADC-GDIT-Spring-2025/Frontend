@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, model, temperature, maxGenLen } = await req.json();
+    const { model, thread, temperature, maxGenLen } = await req.json();
 
-    const response = await fetch('https://api.llms.afterhoursdev.com/completions', {
+    const systemPrompt = "You are a helpful assistant."; // modify this to be more 
+
+    const response = await fetch('https://api.llms.afterhoursdev.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -12,7 +14,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: model || "meta-llama3.3-70b",
-        prompt,
+        messages: thread,
+        system: systemPrompt,
         temperature: temperature ?? 0.5,
         maxGenLen: maxGenLen ?? 512,
       }),

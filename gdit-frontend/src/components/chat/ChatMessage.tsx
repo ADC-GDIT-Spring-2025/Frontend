@@ -1,13 +1,13 @@
 import React from 'react';
 
 interface ChatMessageProps {
+  role: 'user' | 'assistant';
   message: string;
-  sender: 'user' | 'bot';
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message, sender }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ message, role }) => {
   const messageStyle =
-    sender === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground';
+    role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground';
   return (
     <div className={`p-2 my-2 rounded-md ${messageStyle}`}>
       <p>{message}</p>

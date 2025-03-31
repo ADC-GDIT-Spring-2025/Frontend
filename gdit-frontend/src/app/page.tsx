@@ -1,6 +1,6 @@
 "use client"; // needs to run as a React-client component
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -20,35 +20,43 @@ import { FilterDialog } from "./FilterDialog"
 import { fetchLlamaResponse } from "@/lib/llamaApi"; 
 import { ChatMessage } from "@/components/chat/ChatMessage"; 
 
-
+type ChatMessageType = {
+  role: "user" | "assistant";
+  message: string;
+};
 
 export default function Home() {
-  const [messages, setMessages] = useState<{ text: string; sender: "user" | "bot" }[]>([]);
+  const [thread, setThread] = useState<ChatMessageType[]>([]);
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    console.log("thread updated:", thread);
+  }, [thread]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    const userMessage: { text: string; sender: "user" | "bot" } = { text: input, sender: "user" };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    const userMessage: ChatMessageType = { role: "user", message: input };
+    const newThread = [...thread, userMessage];
+    setThread(newThread);
 
     try {
-      const botResponse = await fetchLlamaResponse(input);
-      const botMessage: { text: string; sender: "user" | "bot" } = { text: botResponse, sender: "bot" };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      const botResponse = await fetchLlamaResponse(newThread);
+      const botMessage: ChatMessageType = { role: "assistant", message: botResponse };
+      setThread([...newThread, botMessage]);
     } catch (error) {
       console.error("Error fetching bot response:", error);
     }
 
     setInput(""); //clear input after
-  };
+  }
 
   return (
     <div className="flex flex-col justify-between h-screen p-4 bg-neutral-900">
       
       <div className="flex justify-between items-center w-full text-white text-3xl">
         <h2>EmailMiner.ai</h2>
-        <Button className="cursor-pointer hover:bg-praxisRed" onClick={() => setMessages([])}>
+        <Button className="cursor-pointer hover:bg-praxisRed" onClick={() => setThread([])}>
           Clear
         </Button>
       </div>
@@ -78,8 +86,8 @@ export default function Home() {
       <div className="flex flex-col items-center justify-between h-1/2 overflow-y-auto w-full max-w-2xl mx-auto bg-neutral-800 p-4 rounded-md">
         {/* Message Display */}
         <div className="flex-grow overflow-y-auto w-full">
-          {messages.map((msg, index) => (
-            <ChatMessage key={index} message={msg.text} sender={msg.sender} />
+          {thread.map((msg, index) => (
+            <ChatMessage key={index} role={msg.role} message={msg.message} />
           ))}
         </div>
 
