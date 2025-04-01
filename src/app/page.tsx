@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchLlamaResponse } from "@/lib/llamaApi"; 
 import { ChatMessage } from "@/components/chat/ChatMessage";
 
@@ -27,8 +27,22 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [startedChat, setStartedChat] = useState(false);
 
+  // Create a ref for the messages container
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll to the bottom of the messages container
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Trigger scroll to bottom whenever messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   const handleSend = async () => {
     if (!input.trim()) return;
+    setInput("")
 
     const userMessage: { text: string; sender: "user" | "bot" } = { text: input, sender: "user" };
     setMessages((prevMessages : { text: string; sender: "user" | "bot" }[]) => [...prevMessages, userMessage]);
@@ -43,12 +57,33 @@ export default function Home() {
       console.error("Error fetching bot response:", error);
     }
 
-    setInput(""); //clear input after
   };
 
   return (
-    <div className="min-h-screen relative flex flex-col text-white">
+    <div className="min-h-screen relative flex flex-col text-white overflow-hidden">
       <div className="absolute w-full h-full bg-[url('/gradient.png')] bg-cover bg-no-repeat brightness-50 z-[-5]"></div>
+      <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 mt-2">
+        {/* Clear Messages Button in the top-left */}
+        <Button
+          variant="destructive"
+          className="cursor-pointer ml"
+          onClick={() => {
+            setMessages([]); // Clear messages
+            setStartedChat(false); // Reset startedChat to false
+          }}
+        >
+          Clear Messages
+        </Button>
+
+        {/* Logo in the top-right */}
+        <div className="flex items-center mr-2">
+          <img
+            src="/praxis_engineering_dark_mode_logo.png"
+            alt="Praxis Engineering Logo"
+            className="h-10 object-contain"
+          />
+        </div>
+      </div>
       <main className="flex-1 flex flex-col">
         {!startedChat ? (
         <div className="flex-1 flex flex-col items-center justify-center py-12 px-4">
@@ -84,21 +119,21 @@ export default function Home() {
         <div className="w-full max-w-6xl space-y-8 pt-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-black/30 flex flex-col justify-center h-24 border-gray-500 backdrop-blur-sm hover:bg-black/40 transition-colors">
-              <CardContent className="">
+              <CardContent className="cursor-pointer" onClick={() => setInput("Summarize the key points from the emails sent by Jeffrey Skilling.")}>
                 <h3 className="text-xl text-gray-100 font-semibold mb-2">Summarize the key points</h3>
                 <p className="text-gray-300 text-sm">from the emails sent by Jeffrey Skilling.</p>
               </CardContent>
             </Card>
 
             <Card className="bg-black/30 flex flex-col justify-center h-24 border-gray-500 backdrop-blur-sm hover:bg-black/40 transition-colors">
-              <CardContent className="">
+              <CardContent className="cursor-pointer" onClick={() => setInput("List all emails exchanged between Jeffrey Skilling and Andy Fastow.")}>
                 <h3 className="text-xl text-gray-100 font-semibold mb-2">List all emails exchanged</h3>
                 <p className="text-gray-300 text-sm">between Jeffrey Skilling and Andy Fastow.</p>
               </CardContent>
             </Card>
 
             <Card className="bg-black/30 flex flex-col justify-center h-24 border-gray-500 backdrop-blur-sm hover:bg-black/40 transition-colors">
-              <CardContent className="">
+              <CardContent className="cursor-pointer" onClick={() => setInput("Analyze the sentiment of emails discussing the stock prices.")}>
                 <h3 className="text-xl text-gray-100 font-semibold mb-2">Analyze the sentiment</h3>
                 <p className="text-gray-300 text-sm">of emails discussing the stock prices.</p>
               </CardContent>
@@ -107,33 +142,24 @@ export default function Home() {
         </div>
       </div>
       ) : (
-        <div className="flex-1 overflow-y-auto pt-10 pb-30">
+        <div className="flex-1 pt-10 pb-[120px] mt-9 overflow-auto max-h-full flex-col-reverse">
           <div className="max-w-6xl mx-auto space-y-4">
             {messages.map((msg, index) => (
               <ChatMessage key={index} message={msg.text} sender={msg.sender} />
             ))}
+            {/* Add a div to act as the scroll target */}
+            <div ref={messagesEndRef} />
           </div>
         </div>
       )}
 
         {/* Fixing input at the bottom */}
-        <div className="fixed bottom-0 left-0 right-0 pb-10">
+        <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md p-6">
           <div className="flex flex-col justify-end md:flex-row gap-4 items-end max-w-6xl mx-auto">
-            <Select>
-              <SelectTrigger className="bg-[#f9402b] h-12 hover:bg-[#A04840] border-none">
-                <Pencil className="h-5 w-5 mr-2" />
-                <SelectValue placeholder="Style" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="formal">Formal</SelectItem>
-                <SelectItem value="casual">Casual</SelectItem>
-                <SelectItem value="technical">Technical</SelectItem>
-              </SelectContent>
-            </Select>
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="icon" className="bg-[#f9402b] hover:bg-[#A04840] text-white rounded-full h-12 w-12">
+                <Button size="icon" className="bg-[#f9402b] hover:bg-[#A04840] text-white rounded-full h-12 w-12 cursor-pointer">
                   <Filter size={24} />
                 </Button>
               </DialogTrigger>
@@ -205,6 +231,31 @@ export default function Home() {
                       </Select>
                     </div>
                   </div>
+
+                  {/* Add checkboxes for Neo4J and Qdrant */}
+                  <div className="flex gap-4 items-center">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="neo4j"
+                        className="h-4 w-4 text-[#f9402b] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
+                      />
+                      <label htmlFor="neo4j" className="ml-2 text-sm font-medium text-white">
+                        Neo4J
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="qdrant"
+                        className="h-4 w-4 text-[#f9402b] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
+                      />
+                      <label htmlFor="qdrant" className="ml-2 text-sm font-medium text-white">
+                        Qdrant
+                      </label>
+                    </div>
+                  </div>
+
                   <div className="flex justify-end gap-3">
                     <DialogTrigger asChild>
                       <Button variant="outline" className="bg-transparent border-gray-500 text-white hover:bg-black/30">
@@ -230,7 +281,7 @@ export default function Home() {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleSend} size="icon" className="bg-[#f9402b] hover:bg-[#A04840] text-white rounded-full h-12 w-12">
+              <Button onClick={handleSend} size="icon" className="bg-[#f9402b] hover:bg-[#A04840] text-white rounded-full h-12 w-12 cursor-pointer">
                 <ArrowUp size={24} />
               </Button>
             </div>
