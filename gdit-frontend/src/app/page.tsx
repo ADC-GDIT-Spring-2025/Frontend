@@ -19,7 +19,7 @@ import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 import { FilterDialog } from "./FilterDialog"
 import { fetchLlamaResponse } from "@/lib/llamaApi"; 
 import { ChatMessage } from "@/components/chat/ChatMessage"; 
-import { fetchNeo4jData, neo4jTemplate } from "@/lib/neo4jApi";
+import { fetchNeo4jData } from "@/lib/neo4jApi";
 
 type ChatMessageType = {
   role: "user" | "assistant";

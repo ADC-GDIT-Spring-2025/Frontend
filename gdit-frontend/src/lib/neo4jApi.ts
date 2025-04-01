@@ -1,9 +1,5 @@
 import axios from 'axios';
 
-export function neo4jTemplate(prompt: string, data: string): string {
-  return `Prompt: ${prompt}\nKnowledge Graph Data: ${data}`;
-}
-
 export async function fetchNeo4jData(prompt: string): Promise<string> {
   try {
     const response = await axios.post('http://localhost:8080/neo4j', {
