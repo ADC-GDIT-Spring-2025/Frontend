@@ -271,12 +271,22 @@ export default function Home() {
             </Dialog>
 
             <div className="flex-1 relative">
-              <Input
+              <textarea
                 placeholder="Enter a prompt..."
-                className="bg-black/30 border-gray-500 min-h-[48px] max-h-[200px] pl-4 py-3 text-white placeholder:text-gray-400 w-full resize-none overflow-y-auto"
+                className=" bg-black/30 border border-gray-500 pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 focus:ring-gray-400"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()} 
+                onChange={(e) => {
+                  setInput(e.target.value)
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey){
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                rows={1}
               />
             </div>
 
