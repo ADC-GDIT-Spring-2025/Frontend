@@ -30,10 +30,6 @@ export default function Home() {
   const [thread, setThread] = useState<ChatMessageType[]>([]);
   const [input, setInput] = useState("");
 
-  useEffect(() => {
-    console.log("thread updated:", thread);
-  }, [thread]);
-
   const handleSend = async () => {
     if (!input.trim()) return;
 

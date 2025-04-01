@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_LLAMA_API_KEY}`,
+        Authorization: `Bearer ${process.env.LLAMA_API_KEY}`,
       },
       body: JSON.stringify({
         model: model || "meta-llama3.3-70b",
