@@ -2,8 +2,6 @@ import axios from 'axios';
 
 export async function fetchLlamaResponse(thread: { role: "user" | "assistant", message: string }[]): Promise<string> {
   try {
-    console.log("thread: ", thread);
-
     const response = await axios.post('/api/proxy', {
       model: "meta-llama3.3-70b",
       thread,
