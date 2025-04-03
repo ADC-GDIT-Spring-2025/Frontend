@@ -276,7 +276,7 @@ export default function Home() {
             </Dialog>
 
             <div className="flex-1 relative">
-              <h2 className="text-zinc-400" >Character Count: {input.length}</h2>
+              <h2 className="text-zinc-400" >Character Count: {input.length} / 150</h2>
               <textarea
                 placeholder="Enter a prompt..."
                 className=" bg-black/30 border border-gray-500 pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 focus:ring-gray-400"
