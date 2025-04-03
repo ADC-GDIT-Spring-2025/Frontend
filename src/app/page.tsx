@@ -28,12 +28,15 @@ export default function Home() {
   const [startedChat, setStartedChat] = useState(false);
 
   // Create a ref for the messages container
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const latestMessageRef = useRef<HTMLDivElement>(null);
+
+
 
   // Function to scroll to the bottom of the messages container
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    latestMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  
 
   // Trigger scroll to bottom whenever messages change
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function Home() {
   return (
     <div className="min-h-screen relative flex flex-col text-white overflow-hidden">
       <div className="absolute w-full h-full bg-[url('/gradient.png')] bg-cover bg-no-repeat brightness-50 z-[-5]"></div>
-      <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 mt-2">
+      <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 bg-black/50 backdrop-blur-md">
         {/* Clear Messages Button in the top-left */}
         <Button
           variant="destructive"
@@ -145,16 +148,18 @@ export default function Home() {
         <div className="flex-1 pt-10 pb-[120px] mt-9 overflow-auto max-h-full flex-col-reverse">
           <div className="max-w-6xl mx-auto space-y-4">
             {messages.map((msg, index) => (
-              <ChatMessage key={index} message={msg.text} sender={msg.sender} />
+              <div ref={index === messages.length - 2 ? latestMessageRef : null} key = {index}>
+                <ChatMessage message={msg.text} sender={msg.sender} />
+              </div>
+              
             ))}
-            {/* Add a div to act as the scroll target */}
-            <div ref={messagesEndRef} />
+            
           </div>
         </div>
       )}
 
         {/* Fixing input at the bottom */}
-        <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md p-6">
+        <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md p-3">
           <div className="flex flex-col justify-end md:flex-row gap-4 items-end max-w-6xl mx-auto">
 
             <Dialog>
@@ -271,17 +276,28 @@ export default function Home() {
             </Dialog>
 
             <div className="flex-1 relative">
+              <h2 className="text-zinc-400" >Character Count: {input.length}</h2>
               <textarea
                 placeholder="Enter a prompt..."
                 className=" bg-black/30 border border-gray-500 pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 focus:ring-gray-400"
                 value={input}
                 onChange={(e) => {
-                  setInput(e.target.value)
+                  if (input.length < 150) {
+                    setInput(e.target.value);
+                  }
+
+                
+                  
+                  
                   e.target.style.height = 'auto';
                   e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
                 }}
+
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey){
+                  if (e.key === "Backspace") {
+                    setInput(input.slice(0, -1));
+                  }
+                  if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSend();
                   }
