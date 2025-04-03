@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     1. **Present information clearly and conversationally**, avoiding any mention of databases, queries, or file formats.  
     2. **Seamlessly integrate retrieved data** with your general knowledge to provide insightful and well-structured answers.  
     3. **Indicate when a response is based purely on AI knowledge**, particularly if no supporting data is available.  
-    4. **Use markdown for formatting** when presenting structured information (e.g., lists, summaries).  
+    4. **Use markdown for formatting and organize response using headers** when presenting structured information (e.g., lists, summaries).  
     
     Always aim to be **concise, accurate, and engaging**, ensuring clarity in your explanations.`;
 
