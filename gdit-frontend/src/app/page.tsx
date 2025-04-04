@@ -20,6 +20,7 @@ import { FilterDialog } from "./FilterDialog"
 import { fetchLlamaResponse } from "@/lib/llamaApi"; 
 import { ChatMessage } from "@/components/chat/ChatMessage"; 
 import { fetchNeo4jData } from "@/lib/neo4jApi";
+import { set } from "date-fns";
 
 type ChatMessageType = {
   role: "user" | "assistant";
@@ -27,26 +28,35 @@ type ChatMessageType = {
 };
 
 export default function Home() {
-  const [thread, setThread] = useState<ChatMessageType[]>([]);
   const [input, setInput] = useState("");
+  const [thread, setThread] = useState<ChatMessageType[]>([]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    const data = await fetchNeo4jData(input);
-    const prompt = `Prompt: ${input}\nKnowledge Graph Data: ${data}`
-    
-    const userMessage: ChatMessageType = { role: "user", message: prompt };
-    const newThread = [...thread, userMessage];
-    setThread(newThread);
+    // Add user message to the thread
+    const userMessage: ChatMessageType = { role: "user", message: input };
+    setThread((prev) => [...prev, userMessage]);
 
-    try {
-      const botResponse = await fetchLlamaResponse(newThread);
-      const botMessage: ChatMessageType = { role: "assistant", message: botResponse };
-      setThread([...newThread, botMessage]);
-    } catch (error) {
-      console.error("Error fetching bot response:", error);
+    const response = await fetch('http://localhost:5002/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt: input })
+    });
+
+    if (!response.ok) {
+      console.error("Error fetching llama response:", response.statusText);
+      return;
     }
+
+    const data = await response.json();
+
+    // Add assistant message to the thread
+    const botResponse = data["llm_response"]
+    setThread((prev) => [...prev, { role: "assistant", message: botResponse }]);
+    
 
     setInput(""); //clear input after
   }
