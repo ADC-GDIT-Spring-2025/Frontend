@@ -38,7 +38,7 @@ export default function Home() {
     const userMessage: ChatMessageType = { role: "user", message: input };
     setThread((prev) => [...prev, userMessage]);
 
-    const response = await fetch('http://localhost:5002/', {
+    const response = await fetch('http://localhost:8080/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
