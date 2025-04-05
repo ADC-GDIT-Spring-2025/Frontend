@@ -39,7 +39,7 @@ export default function Home() {
   const scrollToBottom = () => {
     latestMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-  
+
 
   // Trigger scroll to bottom whenever messages change
   useEffect(() => {
@@ -64,14 +64,17 @@ export default function Home() {
         },
         body: JSON.stringify({ prompt: input })
       });
-  
+
+      let data = await response.json();
+
       if (!response.ok) {
-        console.error("Error fetching llama response:", response.statusText);
-        return;
+        data = "Error fetching llama response:" + data.error;
+        console.error(data);
       }
-  
-      const data = await response.json();
-  
+
+      console.log(data);
+
+
       // Add assistant message to the thread
       const botResponse = data["llm_response"]
       setThread((prev) => [...prev, { role: "assistant", message: botResponse }]);
@@ -81,6 +84,28 @@ export default function Home() {
 
   };
 
+  const handleClear = async () => {
+    setThread([]); // Clear messages
+    setStartedChat(false); // Reset startedChat to false
+
+    // signal backend to clear its own thread
+    const response = await fetch('http://localhost:8080/clear', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    console.log(data.message);
+  }
+
+  useEffect(() => {
+    handleClear();
+  }, []);
+
+
+
   return (
     <div className="min-h-screen relative flex flex-col text-white overflow-hidden">
       <div className="absolute w-full h-full bg-[url('/gradient.png')] bg-cover bg-no-repeat brightness-50 z-[-5]"></div>
@@ -89,10 +114,7 @@ export default function Home() {
         <Button
           variant="destructive"
           className="cursor-pointer ml"
-          onClick={() => {
-            setThread([]); // Clear messages
-            setStartedChat(false); // Reset startedChat to false
-          }}
+          onClick={handleClear}
         >
           Clear Messages
         </Button>
@@ -170,9 +192,9 @@ export default function Home() {
               <div ref={index === thread.length - 2 ? latestMessageRef : null} key = {index}>
                 <ChatMessage message={msg.message} role={msg.role} />
               </div>
-              
+
             ))}
-            
+
           </div>
         </div>
       )}
@@ -195,28 +217,28 @@ export default function Home() {
                   <div className="space-y-4">
                     <div>
                       <label className="text-sm font-medium mb-2 block">From</label>
-                      <Input 
+                      <Input
                         placeholder="Sender email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
                       />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">To</label>
-                      <Input 
+                      <Input
                         placeholder="Recipient email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
                       />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">CC</label>
-                      <Input 
+                      <Input
                         placeholder="CC email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
                       />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">BCC</label>
-                      <Input 
+                      <Input
                         placeholder="BCC email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
                       />
@@ -224,11 +246,11 @@ export default function Home() {
                     <div>
                       <label className="text-sm font-medium mb-2 block">Date Range</label>
                       <div className="flex gap-2">
-                        <Input 
+                        <Input
                           type="date"
                           className="bg-black/30 border-gray-500 text-white"
                         />
-                        <Input 
+                        <Input
                           type="date"
                           className="bg-black/30 border-gray-500 text-white"
                         />
@@ -236,7 +258,7 @@ export default function Home() {
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">Contains Keywords</label>
-                      <Input 
+                      <Input
                         placeholder="Search terms"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
                       />
@@ -305,17 +327,17 @@ export default function Home() {
                     setInput(e.target.value);
                   }
 
-                
-                  
-                  
+
+
+
                   e.target.style.height = 'auto';
                   e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
                 }}
 
                 onKeyDown={(e) => {
-                  if (e.key === "Backspace") {
-                    setInput(input.slice(0, -1));
-                  }
+                  // if (e.key === "Backspace") {
+                  //   setInput(input.slice(0, -1));
+                  // }
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSend();
