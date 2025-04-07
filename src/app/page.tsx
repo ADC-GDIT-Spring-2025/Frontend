@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dialog"
 import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/components/chat/ChatMessage";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from 'next/image';
 
 type ChatMessageType = {
   role: "user" | "assistant";
@@ -29,6 +31,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [thread, setThread] = useState<ChatMessageType[]>([]);
   const [startedChat, setStartedChat] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Create a ref for the messages container
   const latestMessageRef = useRef<HTMLDivElement>(null);
@@ -54,6 +57,7 @@ export default function Home() {
     const userMessage: ChatMessageType = { role: "user", message: input };
     setThread((prev) => [...prev, userMessage]);
     setStartedChat(true);
+    setLoading(true);
 
     try {
       console.log("Sending message:", input);
@@ -80,6 +84,8 @@ export default function Home() {
       setThread((prev) => [...prev, { role: "assistant", message: botResponse }]);
     } catch (error) {
       console.error("Error fetching bot response:", error);
+    } finally {
+      setLoading(false);
     }
 
   };
@@ -109,11 +115,11 @@ export default function Home() {
   return (
     <div className="min-h-screen relative flex flex-col text-white overflow-hidden">
       <div className="absolute w-full h-full bg-[url('/gradient.png')] bg-cover bg-no-repeat brightness-50 z-[-5]"></div>
-      <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 bg-black/50 backdrop-blur-md">
+      <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 backdrop-blur-md">
         {/* Clear Messages Button in the top-left */}
         <Button
-          variant="destructive"
-          className="cursor-pointer ml"
+          variant="link"
+          className="cursor-pointer text-white"
           onClick={handleClear}
         >
           Clear Messages
@@ -121,17 +127,19 @@ export default function Home() {
 
         {/* Logo in the top-right */}
         <div className="flex items-center mr-2">
-          <img
-            src="/praxis_engineering_dark_mode_logo.png"
-            alt="Praxis Engineering Logo"
-            className="h-10 object-contain"
-          />
+              <img
+              src="/praxis_engineering_dark_mode_logo.png"
+              alt="Praxis Engineering Logo"
+              className="h-10 object-contain opacity-50"
+            />
         </div>
       </div>
       <main className="flex-1 flex flex-col">
         {!startedChat ? (
         <div className="flex-1 flex flex-col items-center justify-center py-12 px-4">
+          {/* put here */}
           <div className="text-center space-y-2 relative">
+            
             <div className="absolute -right-16 top-0">
               <Dialog>
                 <DialogTrigger asChild>
@@ -156,6 +164,7 @@ export default function Home() {
                 </DialogContent>
               </Dialog>
             </div>
+            
             <h2 className="text-2xl font-medium text-[#E8C0BC] opacity-45">Welcome to</h2>
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-[#E8C0BC] opacity-45">EmailMiner.ai</h1>
           </div>
@@ -194,14 +203,37 @@ export default function Home() {
               </div>
 
             ))}
-
+            {loading && (
+               <div className={`flex justify-start items-start`}>
+               {/* Bot Icon */}
+               
+                <div className="w-8 h-8 rounded-full overflow-hidden mt-3 mr-3">
+                  <Image src="/image.png" alt="Bot Icon" width={32} height={32} className="object-cover" />
+                </div>
+               {/* Message Box */}
+               <div 
+               className={`max-w-[80%] rounded-lg p-4 bg-black/30 border border-gray-500 mr-auto`}
+               style = {{ 
+                 wordBreak: 'break-word',
+                 overflowWrap: 'break-word'
+               }}>
+                <div className="flex flex-row gap-2">
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                </div>
+                     
+                 </div>
+               </div>
+              
+            )}
           </div>
         </div>
       )}
 
         {/* Fixing input at the bottom */}
-        <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md p-3">
-          <div className="flex flex-col justify-end md:flex-row gap-4 items-end max-w-6xl mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md p-3">
+          <div className="flex flex-col justify-end md:flex-row md:items-center gap-4 items-end max-w-6xl mx-auto">
 
             <Dialog>
               <DialogTrigger asChild>
@@ -317,10 +349,9 @@ export default function Home() {
             </Dialog>
 
             <div className="flex-1 relative">
-              <h2 className="text-zinc-400" >Character Count: {input.length} / 150</h2>
               <textarea
                 placeholder="Enter a prompt..."
-                className=" bg-black/30 border border-gray-500 pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 focus:ring-gray-400"
+                className=" bg-black/30 border border-gray-500 resize-none pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 focus:ring-gray-400"
                 value={input}
                 onChange={(e) => {
                   if (input.length < 150) {
@@ -331,7 +362,7 @@ export default function Home() {
 
 
                   e.target.style.height = 'auto';
-                  e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 175)}px`;
                 }}
 
                 onKeyDown={(e) => {
@@ -352,6 +383,9 @@ export default function Home() {
                 <ArrowUp size={24} />
               </Button>
             </div>
+          </div>
+          <div className="flex justify-center">
+            <h2 className="text-zinc-400" >Character Remaining: {150 - input.length} / 150</h2>
           </div>
         </div>
       </main>
