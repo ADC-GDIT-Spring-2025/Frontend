@@ -213,19 +213,25 @@ export default function Home() {
         <div className="flex-1 pt-10 pb-[120px] mt-9 overflow-auto max-h-full flex-col-reverse">
           <div className="max-w-6xl mx-auto space-y-4">
             {thread.map((msg, index) => (
-              <div ref={index === thread.length - 2 ? latestMessageRef : null} key = {index}>
+              <div ref={index === thread.length - 2 ? latestMessageRef : null} key = {index} className="text-white">
                 {msg.role === "user" && (
                   <ChatMessage message={msg.message} role={msg.role} />
                 )}
 
                 {msg.role === "assistant" && (
-                  <div className="prose text-white">
-                    <Markdown>{msg.message}</Markdown>
-                    {/* {msg.message} */}
+                  <div
+                    className="prose prose-headings:text-white prose-li:text-white prose-ol:text-white prose-strong:text-white text-white"
+                    style={{
+                      '--tw-prose-bullets': 'white', // For unordered list bullets
+                      '--tw-prose-counters': 'white', // For ordered list numbers
+                    } as React.CSSProperties}
+                  >
+                    {/* Pure Markdown Version of the Resopnse  */}
+                    <Markdown>{msg.message}</Markdown> 
+                    {/* Markdown + Typed.js version of the response */}
+                    {/* <ChatMessage message={msg.message} role={msg.role} /> */}
                   </div>
-                  
                 )}
-                
               </div>
 
             ))}

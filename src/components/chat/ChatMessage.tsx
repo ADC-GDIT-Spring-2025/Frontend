@@ -20,7 +20,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ role, message }) => {
       )}
       {/* Message Box */}
       <div 
-      className={`max-w-[80%] rounded-lg p-4 ${ role === 'user' ? 'bg-[#f9402b]/30 border border-[#f9402b] 50 ml-auto' : 'bg-black/30 border border-gray-500 mr-auto'}`}
+      className={`text-white max-w-[80%] rounded-lg p-4 ${ role === 'user' ? 'bg-[#f9402b]/30 border border-[#f9402b] 50 ml-auto' : 'bg-black/30 border border-gray-500 mr-auto'}`}
       style = {{ 
         wordBreak: 'break-word',
         overflowWrap: 'break-word'

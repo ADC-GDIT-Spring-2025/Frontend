@@ -35,6 +35,10 @@ const MarkdownTypedRenderer: React.FC<MarkdownTypedRendererProps> = ({ markdownC
           if (typedRef.current) {
             typedRef.current.style.display = 'none'; // Hide the typed text
           }
+          // Hide the cursor
+          if (typedRef.current) {
+            typedRef.current.nextElementSibling?.classList.add('hidden'); // Ensure the cursor is hidden
+          }
         }
       });
     }
@@ -50,12 +54,12 @@ const MarkdownTypedRenderer: React.FC<MarkdownTypedRendererProps> = ({ markdownC
   return (
     <div className="relative">
       {/* Typed.js will type into this element */}
-      <div className="font-mono whitespace-pre-wrap" ref={typedRef}></div>
+      <div className="font-mono whitespace-pre-wrap text-white" ref={typedRef}></div>
       
       {/* The actual markdown render that will replace the typed text when complete */}
       <div 
         ref={contentRef} 
-        className="prose max-w-none" 
+        className="prose max-w-none text-white" 
         style={{ display: 'none' }}
       >
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
