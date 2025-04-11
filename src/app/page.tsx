@@ -21,6 +21,8 @@ import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/components/chat/ChatMessage";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from 'next/image';
+import Markdown from 'react-markdown';
+
 
 type ChatMessageType = {
   role: "user" | "assistant";
@@ -199,7 +201,18 @@ export default function Home() {
           <div className="max-w-6xl mx-auto space-y-4">
             {thread.map((msg, index) => (
               <div ref={index === thread.length - 2 ? latestMessageRef : null} key = {index}>
-                <ChatMessage message={msg.message} role={msg.role} />
+                {msg.role === "user" && (
+                  <ChatMessage message={msg.message} role={msg.role} />
+                )}
+
+                {msg.role === "assistant" && (
+                  <div className="prose text-white">
+                    <Markdown>{msg.message}</Markdown>
+                    {/* {msg.message} */}
+                  </div>
+                  
+                )}
+                
               </div>
 
             ))}
