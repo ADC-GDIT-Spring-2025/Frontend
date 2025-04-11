@@ -34,6 +34,18 @@ export default function Home() {
   const [thread, setThread] = useState<ChatMessageType[]>([]);
   const [startedChat, setStartedChat] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    from: "",
+    to: "",
+    cc: "",
+    bcc: "",
+    dateFrom: "",
+    dateTo: "",
+    keywords: "",
+    hasAttachment: "any",
+    useNeo4j: true,
+    useQdrant: false
+  });
 
   // Create a ref for the messages container
   const latestMessageRef = useRef<HTMLDivElement>(null);
@@ -68,7 +80,10 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: input })
+        body: JSON.stringify({ 
+          prompt: input,
+          filters: filters
+        })
       });
 
       let data = await response.json();
@@ -80,7 +95,6 @@ export default function Home() {
 
       console.log(data);
 
-
       // Add assistant message to the thread
       const botResponse = data["llm_response"]
       setThread((prev) => [...prev, { role: "assistant", message: botResponse }]);
@@ -89,7 +103,6 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleClear = async () => {
@@ -265,6 +278,8 @@ export default function Home() {
                       <Input
                         placeholder="Sender email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                        value={filters.from}
+                        onChange={(e) => setFilters(prev => ({ ...prev, from: e.target.value }))}
                       />
                     </div>
                     <div>
@@ -272,6 +287,8 @@ export default function Home() {
                       <Input
                         placeholder="Recipient email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                        value={filters.to}
+                        onChange={(e) => setFilters(prev => ({ ...prev, to: e.target.value }))}
                       />
                     </div>
                     <div>
@@ -279,6 +296,8 @@ export default function Home() {
                       <Input
                         placeholder="CC email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                        value={filters.cc}
+                        onChange={(e) => setFilters(prev => ({ ...prev, cc: e.target.value }))}
                       />
                     </div>
                     <div>
@@ -286,6 +305,8 @@ export default function Home() {
                       <Input
                         placeholder="BCC email address"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                        value={filters.bcc}
+                        onChange={(e) => setFilters(prev => ({ ...prev, bcc: e.target.value }))}
                       />
                     </div>
                     <div>
@@ -294,10 +315,14 @@ export default function Home() {
                         <Input
                           type="date"
                           className="bg-black/30 border-gray-500 text-white"
+                          value={filters.dateFrom}
+                          onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
                         />
                         <Input
                           type="date"
                           className="bg-black/30 border-gray-500 text-white"
+                          value={filters.dateTo}
+                          onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
                         />
                       </div>
                     </div>
@@ -306,11 +331,13 @@ export default function Home() {
                       <Input
                         placeholder="Search terms"
                         className="bg-black/30 border-gray-500 text-white placeholder:text-gray-400"
+                        value={filters.keywords}
+                        onChange={(e) => setFilters(prev => ({ ...prev, keywords: e.target.value }))}
                       />
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">Has Attachment</label>
-                      <Select>
+                      <Select value={filters.hasAttachment} onValueChange={(value) => setFilters(prev => ({ ...prev, hasAttachment: value }))}>
                         <SelectTrigger className="bg-black/30 border-gray-500 text-white w-full">
                           <SelectValue placeholder="Select option" />
                         </SelectTrigger>
@@ -330,6 +357,8 @@ export default function Home() {
                         type="checkbox"
                         id="neo4j"
                         className="h-4 w-4 text-[#f9402b] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
+                        checked={filters.useNeo4j}
+                        onChange={(e) => setFilters(prev => ({ ...prev, useNeo4j: e.target.checked }))}
                       />
                       <label htmlFor="neo4j" className="ml-2 text-sm font-medium text-white">
                         Neo4J
@@ -340,6 +369,8 @@ export default function Home() {
                         type="checkbox"
                         id="qdrant"
                         className="h-4 w-4 text-[#f9402b] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
+                        checked={filters.useQdrant}
+                        onChange={(e) => setFilters(prev => ({ ...prev, useQdrant: e.target.checked }))}
                       />
                       <label htmlFor="qdrant" className="ml-2 text-sm font-medium text-white">
                         Qdrant
@@ -349,13 +380,30 @@ export default function Home() {
 
                   <div className="flex justify-end gap-3">
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="bg-transparent border-gray-500 text-white hover:bg-black/30">
+                      <Button 
+                        variant="outline" 
+                        className="bg-transparent border-gray-500 text-white hover:bg-black/30"
+                        onClick={() => setFilters({
+                          from: "",
+                          to: "",
+                          cc: "",
+                          bcc: "",
+                          dateFrom: "",
+                          dateTo: "",
+                          keywords: "",
+                          hasAttachment: "any",
+                          useNeo4j: true,
+                          useQdrant: false
+                        })}
+                      >
                         Reset
                       </Button>
                     </DialogTrigger>
-                    <Button className="bg-[#f9402b] hover:bg-[#A04840] text-white border-none">
-                      Apply Filters
-                    </Button>
+                    <DialogTrigger asChild>
+                      <Button className="bg-[#f9402b] hover:bg-[#A04840] text-white border-none">
+                        Apply Filters
+                      </Button>
+                    </DialogTrigger>
                   </div>
                 </div>
               </DialogContent>
