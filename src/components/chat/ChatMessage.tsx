@@ -2,6 +2,7 @@ import React from 'react';
 import Markdown from 'react-markdown';
 import Image from 'next/image';
 import { User } from 'lucide-react'
+import MarkdownTypedRenderer from '../ui/MarkdownTypedRenderer';
 
 interface ChatMessageProps {
   role: 'user' | 'assistant';
@@ -24,9 +25,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ role, message }) => {
         wordBreak: 'break-word',
         overflowWrap: 'break-word'
       }}>
-            <Markdown>
-              {message}
-            </Markdown>
+            <MarkdownTypedRenderer markdownContent={message} />
         </div>
         {/* User Icon */}
         {role == 'user' && (
