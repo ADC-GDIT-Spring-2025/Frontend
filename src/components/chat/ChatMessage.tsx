@@ -25,7 +25,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ role, message }) => {
         wordBreak: 'break-word',
         overflowWrap: 'break-word'
       }}>
-            <MarkdownTypedRenderer markdownContent={message} />
+            <p>{message}</p>
         </div>
         {/* User Icon */}
         {role == 'user' && (

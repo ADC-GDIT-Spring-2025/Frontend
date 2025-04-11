@@ -236,28 +236,11 @@ export default function Home() {
 
             ))}
             {loading && (
-               <div className={`flex justify-start items-start`}>
-               {/* Bot Icon */}
-               
-                <div className="w-8 h-8 rounded-full overflow-hidden mt-3 mr-3">
-                  <Image src="/image.png" alt="Bot Icon" width={32} height={32} className="object-cover" />
-                </div>
-               {/* Message Box */}
-               <div 
-               className={`max-w-[80%] rounded-lg p-4 bg-black/30 border border-gray-500 mr-auto`}
-               style = {{ 
-                 wordBreak: 'break-word',
-                 overflowWrap: 'break-word'
-               }}>
                 <div className="flex flex-row gap-2">
                   <Skeleton className="h-3 w-3 rounded-full" />
                   <Skeleton className="h-3 w-3 rounded-full" />
                   <Skeleton className="h-3 w-3 rounded-full" />
                 </div>
-                     
-                 </div>
-               </div>
-              
             )}
           </div>
         </div>
