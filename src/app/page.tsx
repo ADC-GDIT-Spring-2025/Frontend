@@ -129,7 +129,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative flex flex-col text-white overflow-hidden">
-      <div className="absolute w-full h-full bg-[url('/gradient.png')] bg-cover bg-no-repeat brightness-50 z-[-5]"></div>
+      <div className="absolute w-full h-full bg-radial-[at_25%_25%] from-red-800 to-black to-75% to-black bg-cover bg-no-repeat z-[-5]"></div>
       <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 backdrop-blur-md">
         {/* Clear Messages Button in the top-left */}
         <Button
