@@ -38,7 +38,7 @@ const DEFAULT_FILTERS = {
   keywords: "",
   hasAttachment: "any",
   useNeo4j: true,
-  useQdrant: false,
+  useQdrant: true,
 };
 
 export default function Home() {
