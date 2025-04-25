@@ -22,12 +22,60 @@ import { ChatMessage } from "@/components/chat/ChatMessage";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from 'next/image';
 import Markdown from 'react-markdown';
-
+import Loader from "@/components/chat/loader"
 
 type ChatMessageType = {
   role: "user" | "assistant";
   message: string;
 };
+
+const emails = [
+  {
+    "subject": "Meeting Reminder",
+    "body": "Don't forget about the meeting scheduled for tomorrow at 10 AM.",
+    "to": "john.doe@example.com",
+    "from": "jane.doe@example.com",
+    "date": "2023-10-02",
+    "cc": "manager@example.com",
+    "bcc": "hr@example.com"
+  },
+  {
+    "subject": "Project Update",
+    "body": "The project is on track and will be completed by the end of the month.",
+    "to": "team@example.com",
+    "from": "project.manager@example.com",
+    "date": "2023-10-03",
+    "cc": "ceo@example.com",
+    "bcc": ""
+  },
+  {
+    "subject": "Invoice Attached",
+    "body": "Please find the attached invoice for the recent purchase.",
+    "to": "accounts@example.com",
+    "from": "vendor@example.com",
+    "date": "2023-10-04",
+    "cc": "",
+    "bcc": "finance@example.com"
+  },
+  {
+    "subject": "Holiday Announcement",
+    "body": "The office will remain closed on October 10th for the holiday.",
+    "to": "all@example.com",
+    "from": "admin@example.com",
+    "date": "2023-10-05",
+    "cc": "",
+    "bcc": ""
+  },
+  {
+    "subject": "Follow-Up on Proposal",
+    "body": "Can we schedule a call to discuss the proposal further?",
+    "to": "client@example.com",
+    "from": "sales@example.com",
+    "date": "2023-10-06",
+    "cc": "manager@example.com",
+    "bcc": ""
+  }
+];
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -129,7 +177,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative flex flex-col text-white overflow-hidden">
-      <div className="absolute w-full h-full bg-radial-[at_25%_25%] from-red-800 to-black to-75% to-black bg-cover bg-no-repeat z-[-5]"></div>
+      {!startedChat ? (
+        <div className="absolute w-full h-full bg-radial-[at_25%_25%] from-[#d4534a] via-[#471512] to-75% to-black bg-cover bg-no-repeat z-[-5]"></div>
+      ) : (
+        <div className="absolute w-full h-full">
+        <div className="absolute w-full h-full bg-radial-[at_25%_25%] bg-blend-darken from-[#d4534a] via-[#471512] to-75% to-black bg-cover bg-no-repeat z-[-5]"></div>
+        <div className="absolute w-full h-full bg-black z-[-4] opacity-30"></div>
+        </div>
+      )}
+      
       <div className="fixed top-0 left-0 w-full flex items-center justify-between px-4 py-2 z-10 backdrop-blur-md">
         {/* Clear Messages Button in the top-left */}
         <Button
@@ -210,7 +266,7 @@ export default function Home() {
         </div>
       </div>
       ) : (
-        <div className="flex-1 pt-10 pb-[120px] mt-9 overflow-auto max-h-full flex-col-reverse">
+        <div className="flex-1 pt-10 pb-[120px] mt-9 z-[9] overflow-auto max-h-full flex-col-reverse">
           <div className="max-w-6xl mx-auto space-y-4">
             {thread.map((msg, index) => (
               <div ref={index === thread.length - 2 ? latestMessageRef : null} key = {index} className="text-white">
@@ -219,6 +275,7 @@ export default function Home() {
                 )}
 
                 {msg.role === "assistant" && (
+                  <div>
                   <div
                     className="prose prose-headings:text-white prose-li:text-white prose-ol:text-white prose-strong:text-white text-white"
                     style={{
@@ -231,28 +288,75 @@ export default function Home() {
                     {/* Markdown + Typed.js version of the response */}
                     {/* <ChatMessage message={msg.message} role={msg.role} /> */}
                   </div>
+                  {/* Dialog Trigger Below Each Message When Emails Array is Empty */}
+                  {emails.length !== 0 && (
+                    <div className="mt-4">
+                      <Dialog>
+                        <DialogTrigger asChild onClick={() => {console.log("Clicked")}}>
+                          <Button
+                            size="sm"
+                            className="bg-[#f25b50] hover:bg-[#A04840] text-white rounded-md"
+                          >
+                            View Emails
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-black/90 border-gray-800 text-white max-w-[75vw] max-h-[75vh] overflow-scroll">
+                          <DialogHeader>
+                            <DialogTitle>Email Data</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            {emails.map((email, emailIndex) => (
+                              <div
+                                key={emailIndex}
+                                className="bg-black/30 border border-gray-500 rounded-md p-4"
+                              >
+                                <h3 className="text-lg font-semibold text-white">
+                                  {email.subject}
+                                </h3>
+                                <p className="text-sm text-gray-300">
+                                  <strong>From:</strong> {email.from}
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                  <strong>To:</strong> {email.to}
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                  <strong>Date:</strong> {email.date}
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                  <strong>CC:</strong> {email.cc || 'N/A'}
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                  <strong>BCC:</strong> {email.bcc || 'N/A'}
+                                </p>
+                                <p className="text-sm text-gray-300 mt-2">
+                                  {email.body}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  )}
+                  </div>
                 )}
               </div>
 
             ))}
             {loading && (
-                <div className="flex flex-row gap-2">
-                  <Skeleton className="h-3 w-3 rounded-full" />
-                  <Skeleton className="h-3 w-3 rounded-full" />
-                  <Skeleton className="h-3 w-3 rounded-full" />
-                </div>
+                <Loader />
             )}
           </div>
         </div>
       )}
 
         {/* Fixing input at the bottom */}
-        <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md p-3">
+        <div className="fixed bottom-0 left-0 z-[10] right-0 backdrop-blur-md p-3">
           <div className="flex flex-col justify-end md:flex-row md:items-center gap-4 items-end max-w-6xl mx-auto">
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="icon" className="bg-[#f9402b] hover:bg-[#A04840] text-white rounded-full h-12 w-12 cursor-pointer">
+                <Button size="icon" className="bg-[#f25b50] hover:bg-[#A04840] text-white rounded-full h-12 w-12 cursor-pointer">
                   <Filter size={24} />
                 </Button>
               </DialogTrigger>
@@ -345,7 +449,7 @@ export default function Home() {
                       <input
                         type="checkbox"
                         id="neo4j"
-                        className="h-4 w-4 text-[#f9402b] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
+                        className="h-4 w-4 text-[#f25b50] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
                         checked={filters.useNeo4j}
                         onChange={(e) => setFilters(prev => ({ ...prev, useNeo4j: e.target.checked }))}
                       />
@@ -357,7 +461,7 @@ export default function Home() {
                       <input
                         type="checkbox"
                         id="qdrant"
-                        className="h-4 w-4 text-[#f9402b] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
+                        className="h-4 w-4 text-[#f25b50] border-gray-500 bg-black/30 focus:ring-[#f9402b]"
                         checked={filters.useQdrant}
                         onChange={(e) => setFilters(prev => ({ ...prev, useQdrant: e.target.checked }))}
                       />
@@ -389,7 +493,7 @@ export default function Home() {
                       </Button>
                     </DialogTrigger>
                     <DialogTrigger asChild>
-                      <Button className="bg-[#f9402b] hover:bg-[#A04840] text-white border-none">
+                      <Button className="bg-[#f25b50] hover:bg-[#A04840] text-white border-none">
                         Apply Filters
                       </Button>
                     </DialogTrigger>
@@ -429,7 +533,7 @@ export default function Home() {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleSend} size="icon" className="bg-[#f9402b] hover:bg-[#A04840] text-white rounded-full h-12 w-12 cursor-pointer">
+              <Button onClick={handleSend} size="icon" className="bg-[#f25b50] hover:bg-[#A04840] text-white rounded-full h-12 w-12 cursor-pointer">
                 <ArrowUp size={24} />
               </Button>
             </div>
