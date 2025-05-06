@@ -23,59 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from 'next/image';
 import Markdown from 'react-markdown';
 import Loader from "@/components/chat/loader"
-
-type ChatMessageType = {
-  role: "user" | "assistant";
-  message: string;
-};
-
-const emails = [
-  {
-    "subject": "Meeting Reminder",
-    "body": "Don't forget about the meeting scheduled for tomorrow at 10 AM.",
-    "to": "john.doe@example.com",
-    "from": "jane.doe@example.com",
-    "date": "2023-10-02",
-    "cc": "manager@example.com",
-    "bcc": "hr@example.com"
-  },
-  {
-    "subject": "Project Update",
-    "body": "The project is on track and will be completed by the end of the month.",
-    "to": "team@example.com",
-    "from": "project.manager@example.com",
-    "date": "2023-10-03",
-    "cc": "ceo@example.com",
-    "bcc": ""
-  },
-  {
-    "subject": "Invoice Attached",
-    "body": "Please find the attached invoice for the recent purchase.",
-    "to": "accounts@example.com",
-    "from": "vendor@example.com",
-    "date": "2023-10-04",
-    "cc": "",
-    "bcc": "finance@example.com"
-  },
-  {
-    "subject": "Holiday Announcement",
-    "body": "The office will remain closed on October 10th for the holiday.",
-    "to": "all@example.com",
-    "from": "admin@example.com",
-    "date": "2023-10-05",
-    "cc": "",
-    "bcc": ""
-  },
-  {
-    "subject": "Follow-Up on Proposal",
-    "body": "Can we schedule a call to discuss the proposal further?",
-    "to": "client@example.com",
-    "from": "sales@example.com",
-    "date": "2023-10-06",
-    "cc": "manager@example.com",
-    "bcc": ""
-  }
-];
+import { ChatMessageType, EmailType } from "@/app/types";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -92,8 +40,9 @@ export default function Home() {
     keywords: "",
     hasAttachment: "any",
     useNeo4j: true,
-    useQdrant: false
+    useQdrant: true
   });
+  const [emails, setEmails] = useState<EmailType[]>([]);
 
   // Create a ref for the messages container
   const latestMessageRef = useRef<HTMLDivElement>(null);
@@ -137,7 +86,7 @@ export default function Home() {
       let data = await response.json();
 
       if (!response.ok) {
-        data = "Error fetching llama response:" + data.error;
+        data = "Error fetching llama response:" + (data.error ?? "Unknown error");
         console.error(data);
       }
 
@@ -146,6 +95,10 @@ export default function Home() {
       // Add assistant message to the thread
       const botResponse = data["llm_response"]
       setThread((prev) => [...prev, { role: "assistant", message: botResponse }]);
+
+      setEmails(data["raw_emails"] ?? []); // Set emails from the response
+
+      console.log(emails)
     } catch (error) {
       console.error("Error fetching bot response:", error);
     } finally {
@@ -277,7 +230,7 @@ export default function Home() {
                 {msg.role === "assistant" && (
                   <div>
                   <div
-                    className="prose prose-headings:text-white prose-li:text-white prose-ol:text-white prose-strong:text-white text-white"
+                    className="prose prose-headings:text-white prose-li:text-white prose-ol:text-white prose-blockquote:text-white prose-strong:text-white text-white"
                     style={{
                       '--tw-prose-bullets': 'white', // For unordered list bullets
                       '--tw-prose-counters': 'white', // For ordered list numbers
