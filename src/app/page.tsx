@@ -19,10 +19,8 @@ import {
 } from "@/components/ui/dialog"
 import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/components/chat/ChatMessage";
-import { Skeleton } from "@/components/ui/skeleton";
-import Image from 'next/image';
-import Markdown from 'react-markdown';
-import Loader from "@/components/chat/loader"
+import Markdown from "react-markdown";
+import Loader from "@/components/chat/loader";
 import { ChatMessageType, EmailType } from "@/app/types";
 
 export default function Home() {
@@ -40,7 +38,7 @@ export default function Home() {
     keywords: "",
     hasAttachment: "any",
     useNeo4j: true,
-    useQdrant: true
+    useQdrant: true,
   });
   const [emails, setEmails] = useState<EmailType[]>([]);
 
@@ -270,17 +268,27 @@ export default function Home() {
                                   <strong>From:</strong> {email.from}
                                 </p>
                                 <p className="text-sm text-gray-300">
-                                  <strong>To:</strong> {email.to}
+                                      <strong>To:</strong> {email.to.join(", ")}
                                 </p>
                                 <p className="text-sm text-gray-300">
-                                  <strong>Date:</strong> {email.date}
+                                      <strong>Date:</strong> {email.time}
                                 </p>
+                                    {email.cc &&
+                                      Array.isArray(email.cc) &&
+                                      email.cc.length > 0 && (
                                 <p className="text-sm text-gray-300">
-                                  <strong>CC:</strong> {email.cc || 'N/A'}
+                                          <strong>CC:</strong>{" "}
+                                          {email.cc.join(", ")}
                                 </p>
+                                      )}
+                                    {email.bcc &&
+                                      Array.isArray(email.bcc) &&
+                                      email.bcc.length > 0 && (
                                 <p className="text-sm text-gray-300">
-                                  <strong>BCC:</strong> {email.bcc || 'N/A'}
+                                          <strong>BCC:</strong>{" "}
+                                          {email.bcc.join(", ")}
                                 </p>
+                                      )}
                                 <p className="text-sm text-gray-300 mt-2">
                                   {email.body}
                                 </p>
