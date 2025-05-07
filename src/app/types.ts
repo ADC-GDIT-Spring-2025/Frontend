@@ -11,4 +11,5 @@ export type EmailType = {
 export type ChatMessageType = {
   role: "user" | "assistant";
   message: string;
+  emails: EmailType[];
 };

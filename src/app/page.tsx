@@ -63,7 +63,7 @@ export default function Home() {
     setInput("")
 
     // Add user message to the thread
-    const userMessage: ChatMessageType = { role: "user", message: input };
+    const userMessage: ChatMessageType = { role: "user", message: input, emails: [] }; 
     setThread((prev) => [...prev, userMessage]);
     setStartedChat(true);
     setLoading(true);
@@ -92,7 +92,7 @@ export default function Home() {
 
       // Add assistant message to the thread
       const botResponse = data["llm_response"]
-      setThread((prev) => [...prev, { role: "assistant", message: botResponse }]);
+      setThread((prev) => [...prev, { role: "assistant", message: botResponse, emails: data["raw_emails"] ?? [] }]);
 
       setEmails(data["raw_emails"] ?? []); // Set emails from the response
 
@@ -227,44 +227,42 @@ export default function Home() {
 
                 {msg.role === "assistant" && (
                   <div>
-                  <div
-                    className="prose prose-headings:text-white prose-li:text-white prose-ol:text-white prose-blockquote:text-white prose-strong:text-white text-white"
-                    style={{
-                      '--tw-prose-bullets': 'white', // For unordered list bullets
-                      '--tw-prose-counters': 'white', // For ordered list numbers
-                    } as React.CSSProperties}
-                  >
-                    {/* Pure Markdown Version of the Resopnse  */}
-                    <Markdown>{msg.message}</Markdown> 
-                    {/* Markdown + Typed.js version of the response */}
-                    {/* <ChatMessage message={msg.message} role={msg.role} /> */}
-                  </div>
-                  {/* Dialog Trigger Below Each Message When Emails Array is Empty */}
-                  {emails.length !== 0 && (
-                    <div className="mt-4">
-                      <Dialog>
-                        <DialogTrigger asChild onClick={() => {console.log("Clicked")}}>
-                          <Button
-                            size="sm"
-                            className="bg-[#f25b50] hover:bg-[#A04840] text-white rounded-md"
-                          >
-                            View Emails
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-black/90 border-gray-800 text-white max-w-[75vw] max-h-[75vh] overflow-scroll">
-                          <DialogHeader>
-                            <DialogTitle>Email Data</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            {emails.map((email, emailIndex) => (
-                              <div
-                                key={emailIndex}
-                                className="bg-black/30 border border-gray-500 rounded-md p-4"
-                              >
-                                <h3 className="text-lg font-semibold text-white">
-                                  {email.subject}
-                                </h3>
-                                <p className="text-sm text-gray-300">
+                    <div
+                      className="prose prose-headings:text-white prose-li:text-white prose-ol:text-white prose-blockquote:text-white prose-strong:text-white text-white"
+                      style={{
+                        "--tw-prose-bullets": "white", // For unordered list bullets
+                        "--tw-prose-counters": "white", // For ordered list numbers
+                      } as React.CSSProperties}
+                    >
+                      <Markdown>{msg.message}</Markdown>
+                    </div>
+
+                    {/* Dialog Trigger Below Each Message When Emails Are Present */}
+                    {msg.emails && msg.emails.length > 0 && (
+                      <div className="mt-4">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              className="bg-[#f25b50] hover:bg-[#A04840] text-white rounded-md"
+                            >
+                              View Emails
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-black/90 border-gray-800 text-white max-w-[75vw] max-h-[75vh] overflow-scroll">
+                            <DialogHeader>
+                              <DialogTitle>Email Data</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              {msg.emails.map((email, emailIndex) => (
+                                <div
+                                  key={emailIndex}
+                                  className="bg-black/30 border border-gray-500 rounded-md p-4"
+                                >
+                                  <h3 className="text-lg font-semibold text-white">
+                                    {email.subject}
+                                  </h3>
+                                  <p className="text-sm text-gray-300">
                                   <strong>From:</strong> {email.from}
                                 </p>
                                 <p className="text-sm text-gray-300">
@@ -293,16 +291,15 @@ export default function Home() {
                                   {email.body}
                                 </p>
                               </div>
-                            ))}
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  )}
+                              ))}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-
             ))}
             {loading && (
                 <Loader />
