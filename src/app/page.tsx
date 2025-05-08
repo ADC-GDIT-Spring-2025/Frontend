@@ -194,9 +194,9 @@ export default function Home() {
         <div className="w-full max-w-6xl space-y-8 pt-20">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-black/30 flex flex-col justify-center h-24 border-gray-500 backdrop-blur-sm hover:bg-black/40 transition-colors">
-              <CardContent className="cursor-pointer" onClick={() => setInput("Summarize the key points from the emails sent by Jeffrey Skilling.")}>
+              <CardContent className="cursor-pointer" onClick={() => setInput("Summarize the key points from the emails sent to or from Beverly Stephens.")}>
                 <h3 className="text-xl text-gray-100 font-semibold mb-2">Summarize the key points</h3>
-                <p className="text-gray-300 text-sm">from the emails sent by Jeffrey Skilling.</p>
+                <p className="text-gray-300 text-sm">from the emails sent to or from Beverly Stephens.</p>
               </CardContent>
             </Card>
 
@@ -249,7 +249,7 @@ export default function Home() {
                               View Emails
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="bg-black/90 border-gray-800 text-white max-w-[75vw] max-h-[75vh] overflow-scroll">
+                          <DialogContent className="bg-black/90 border-gray-800 text-white max-h-[75vh] max-w-[90vw] overflow-y-scroll scrollbar-hide">
                             <DialogHeader>
                               <DialogTitle>Email Data</DialogTitle>
                             </DialogHeader>
@@ -257,7 +257,7 @@ export default function Home() {
                               {msg.emails.map((email, emailIndex) => (
                                 <div
                                   key={emailIndex}
-                                  className="bg-black/30 border border-gray-500 rounded-md p-4"
+                                  className="bg-black/30 border border-gray-500 rounded-md p-4 break-words whitespace-pre-wrap"
                                 >
                                   <h3 className="text-lg font-semibold text-white">
                                     {email.subject}
@@ -463,7 +463,7 @@ export default function Home() {
             <div className="flex-1 relative">
               <textarea
                 placeholder="Enter a prompt..."
-                className=" bg-black/30 border border-gray-500 resize-none pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 focus:ring-gray-400"
+                className=" bg-black/30 border border-gray-500 resize-none pl-4 py-3 placeholder:text-gray-400 w-full rounded-md overflow-y-auto focus:outline-none focus:ring-1 scrollbar-hide focus:ring-gray-400"
                 value={input}
                 onChange={(e) => {
                   if (input.length < 150) {
