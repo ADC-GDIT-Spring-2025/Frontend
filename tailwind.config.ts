@@ -15,6 +15,7 @@ module.exports = {
                   h2: { color: 'white' },
                   h3: { color: 'white' },
                   li: { color: 'white' },
+
                 },
               },
             },
